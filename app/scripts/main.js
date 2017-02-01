@@ -18,11 +18,11 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
       });
   })
   .controller('MainCtrl', function ($scope,$injector,vfr,$interval) {
-    var queryArray=[];
-    var queryString ='';
+    var queryArray=[];                      //Storing All query variable Which Will Be Used To From Query With Where Clause
+    var queryString ='';                    //Store SOQL Query in String Format
     var convertedDate = '';
     var first = '';
-    var firstDayOfWeek = '';
+    var firstDayOfWeek = '';              
     var lastDayOfWeek = '';
   
     $scope.Users = {};
@@ -31,9 +31,11 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
     $scope.selectedProject='';
     $scope.date='';
     // $scope.disableButton="true";
-    $scope.ResourceBooking = {};
+    $scope.ResourceBooking = {};             //Object Storing Queried data of Resource_Booking__c
 
-    $scope.GridDisplayData ={};
+    $scope.GridDisplayData ={};              //This Object Is Holding data to display in a grid  
+
+/*------------------------------------------------Generating column and Row Data for Grid-----------------------------------------------*/
     $scope.ResourceBooking.columnDefs = [
     { name: 'User__c', displayName: 'User'},
     { name: 'Project__c', displayName: 'Project' },
@@ -46,7 +48,8 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
     { name: 'FridayHours__c', displayName: 'Friday' , type: 'number'},
     { name: 'SaturdayHours__c', displayName: 'Saturday' , type: 'number', enableCellEdit: false},
     ];
-/*--------------------------------------------------------------------------------------------------------------------------------------*/  
+
+/*--------------------------Function Is Called Implecitely Whenever the Cell Data Is Edited-----------------------------------------------*/  
   $scope.saveRow = function(rowEntity) {
     var updateObj = rowEntity;
     var objId = updateObj.Id;
@@ -60,19 +63,18 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
           console.log('result',result);          
         }, function(error){
           console.error('error', error);
-        });
-    // fake a delay of 3 seconds whilst the save occurs.
-    $interval( function() {
-      
-    }, 3000, 1);
+        });                                                                        
+    $interval( function() {                                // fake a delay of 3 seconds whilst the save occurs.      
+    }, 3000, 1);                                           //Wait for 3 seconds before initiating update call
   };
-/*--------------------------------------------------------------------------------------------------------------------------------------*/ 
+
+/*-------------------------------------------------------Set gridApi On Scope-----------------------------------------------------------*/ 
   $scope.ResourceBooking.onRegisterApi = function(gridApi){
-    //set gridApi on scope
-    $scope.gridApi = gridApi;
+    $scope.gridApi = gridApi;                                          
     gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
   };
-/*--------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*--------------------------------------------Function Queries All Standard Users In The Org--------------------------------------------*/
   $scope.queryUsers=function(){
       queryString = "SELECT Id,Name,UserType FROM User WHERE UserType = 'Standard'";
       vfr.query(queryString)
@@ -84,7 +86,8 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
         });
     }
     $scope.queryUsers();
-/*--------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*------------------------------Function Queries All Project__c Records In The Org TO Form a DropDown List-------------------------------*/
     $scope.queryProjects=function(){
       queryString = "SELECT Id,Name FROM Project__c";
       vfr.query(queryString)
@@ -96,7 +99,8 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
         });
     }
     $scope.queryProjects();
-/*--------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*-------------------------Function Queries All Resource_Booking__c Record For selected Date's Week-----------------------------------------*/
     $scope.queryResouceData=function(){      
       queryString = 'SELECT Date__c,'+
                       ' Id,'+
@@ -128,6 +132,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
           queryArray =[];
         });
     }
+
 /*--------------------------------------------------------------------------------------------------------------------------------------*/
     $scope.buildQuery=function(){
       convertedDate = new Date($scope.date);
@@ -147,9 +152,10 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
       if(angular.isDefined($scope.selectedProject) && $scope.selectedProject!=''){
       queryArray.push("Project__c = '"+ $scope.selectedProject + "'");
       }
-      $scope.queryResouceData();
+      $scope.queryResouceData();                                                //Call to queryResouceData() after rquiered variable gets data
     }
-/*--------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------Format Date as requiered in SOQL query------------------------------------------------*/
     $scope.formatDate=function(DayOfWeek){
       var year = new Date(DayOfWeek).getFullYear();
       var month = new Date(DayOfWeek).getMonth()+1;
@@ -157,7 +163,8 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
       var formatedDate = year+'-0' + month + '-'+date; 
       return formatedDate;
     }
-/*------------------------------------------------------Watcher To Enable/Disable GetValues Button---------------------------------------*/
+
+/*------------------------------------------------------Watcher To Enable/Disable GetValues Button-----------------------------------------*/
     /*$scope.$watch("date", function (newValue) {
       console.log('watcher RUN-----------');
       $scope.disableButton= "false";
