@@ -1,0 +1,25 @@
+{
+  "name": "TBN_TimeLog",
+  "main": "app.js",
+  "version": "0.0.0",
+  "authors": [
+    "jessie <jessie@apollo.com.ph>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.1.1",
+    "angular": "^1.2.16",
+    "angular-route": "^1.2.16",
+    "ngForce": "https://github.com/dnakov/ngForce-1.git#master",
+    "angularjs-datepicker": "^2.1.12",
+    "angular-ui-grid": "^4.0.2"
+  }
+}
