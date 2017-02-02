@@ -1,1 +1,7 @@
-.container { background-color: antiquewhite;}
+/*.container { background-color: antiquewhite;}*/
+.rootDiv{
+	width: 100%;
+}
+select{
+width:90%;
+}
