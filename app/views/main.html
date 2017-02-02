@@ -1,29 +1,35 @@
-<div class="rootDiv">
-	<div>
+<div class="rootDiv" >
+	<div style="width: 20%;float:left;">
+	<div >
 		<h4>Date:</h4> 
-		<div style="width: 30%">
 		  	<datepicker date-format="fullDate">
 			  <input ng-model="date" type="text"/>
 			</datepicker>
-		</div>
-		<h4>Users:</h4> 
+		</div><br>
+
+		<div>
+		<h4>User:</h4> 
 				<select ng-model="selectedUser">
 					<option value="">--None--</option>
 	        		<option ng-repeat="User in Users" value="{{User.Id}}">{{User.Name}}</option>
 	    		</select>
-
-    	<h4 style="margin-left: 5em">Projects:</h4> 
+	    </div><br>
+	    
+	    <div>			
+    	<h4>Project:</h4> 
     			<select ng-model="selectedProject">
 			 		<option value="">--None--</option>
         			<option ng-repeat="Project in Projects" value="{{Project.Id}}">{{Project.Name}}</option>
     			</select>
- 
-    	<input type="button" value="Get Data" ng-click="buildQuery()" style="margin-left: 5em">
+    	</div><br>
+    	<input type="button" value="Get Data" ng-click="buildQuery()" >
 	</div>
 
 
-	<div>
-		<div ui-grid="ResourceBooking" ui-grid-edit ui-grid-row-edit ui-grid-cellNav class="grid"></div>
+	<div style="width: 80%;float:left;">
+		<div ui-grid="ResourceBooking" ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-pagination class="grid"></div>
 	</div>
+
+	<!-- <input type="button" value="Add Row" ng-click="addRow()" style="margin-left: 5em"> -->
 
 </div>
