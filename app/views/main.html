@@ -2,9 +2,18 @@
 	<div style="width: 20%;float:left;">
 		<div >
 			<h4>Date:</h4> 
-			  	<datepicker date-format="fullDate">
-				  <input ng-model="date" type="text"/>
-				</datepicker>
+		        <p class="input-group">
+		          <input type="text" class="form-control" uib-datepicker-popup ng-model="date" 
+		          					is-open="popup.opened" 
+		          					datepicker-options="dateOptions" 
+		          					ng-required="true" 
+		          					close-text="Close"/>
+		          <span class="input-group-btn">
+		            <button type="button" class="btn btn-default btn-cal" ng-click="openDatePicker()">
+		            	<i class="glyphicon glyphicon-calendar"></i>
+		            </button>
+		          </span>
+		        </p>
 		</div><br>
 
 		<div>
@@ -27,7 +36,7 @@
 	    		Get Data
 	    	</button>
 
-	    	<button type="button" class="btn btn-primary" ng-disabled="disableButton" ng-click="addRow()">
+	    	<button type="button" class="btn btn-primary" ng-disabled="disableButton" ng-click="addRow()" style="margin-left:15%;"">
 	    		Add Row
 	    	</button>
 
