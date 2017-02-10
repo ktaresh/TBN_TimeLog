@@ -1,7 +1,65 @@
 /*.container { background-color: antiquewhite;}*/
 .rootDiv{
 	width: 100%;
+	margin-top: 5%;
 }
 select{
 width:90%;
 }
+
+.weekdaysTime{
+	width:65%;
+	text-align: center;
+}
+
+.dataRows:nth-child(even){
+	background-color: #138EFA;
+}
+
+.tableRes  {
+	border-collapse:collapse;
+	border-spacing:0;
+	border-color:#999;
+}
+.tableRes td{
+	font-family:Arial, sans-serif;
+	font-size:14px;
+	padding:10px 5px;
+	border-style:solid;
+	border-width:1px;
+	overflow:hidden;
+	word-break:normal;
+	border-color:#999;
+	color:#444;
+	background-color:#F7FDFA;
+}
+.tableRes th{
+	font-family:Arial, sans-serif;
+	font-size:14px;
+	font-weight:normal;
+	padding:10px 5px;
+	border-style:solid;
+	border-width:1px;
+	overflow:hidden;
+	word-break:normal;
+	border-color:#999;
+	color:#fff;
+	background-color:#138EFA;
+}
+.tableRes .ResDataCell{
+	background-color:#D2E4FC;
+}
+
+.btn-primary {
+    color: #fff !important;
+    background-color: #138EFA !important;
+    border-color: #2e6da4 !important;
+}
+
+.btn-primary option{
+    background-color: #ffffff !important;
+   	color: #070707 !important;
+}
+
+
+
