@@ -1,0 +1,7 @@
+<input type="text" 
+	class="form-control" 
+	ng-model="recName" 
+	uib-typeahead="sObject.Name as sObject.Name for sObject in fetchRecordFromSobject($viewValue)" 
+	typeahead-on-select="onSelect($item, $model, $label, $event)"
+	typeahead-wait-ms="100"
+	ng-change="onNgChange()"/>
