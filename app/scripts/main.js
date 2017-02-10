@@ -41,6 +41,9 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
     $scope.totalItems = '';
     $scope.currentPage = 2;
     $scope.itemsPerPage = 4;
+    $scope.popup = {
+      opened: false
+    };
 
     $scope.queryUsers=function(){
       queryString = "SELECT Id,Name,UserType FROM User WHERE UserType = 'Standard'";
@@ -200,6 +203,13 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
                                     'SundayHours__c':'','MondayHours__c':'','TuesdayHours__c':'',
                                     'WednesdayHours__c':'', 'ThursdayHours__c':'','FridayHours__c':''});*/
     }
+    $scope.openDatePicker = function() {
+      $scope.popup.opened = true;
+    };
+
+    $scope.setDate = function(year, month, day) {
+      $scope.date = new Date(year, month, day);
+    };
 })
 .directive("typeaheadDirective",function(){
     return{
@@ -237,6 +247,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
 
         $scope.onSelect = function($item, $model, $label, $event){
           console.log('$item',$item.Id);
+           console.log('$item---2',$item);
           $scope.recName = $label;
           $scope.currData = $model;
         }
