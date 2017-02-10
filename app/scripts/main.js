@@ -8,8 +8,7 @@ angular.module('demoPage', ['ngRoute','demoPage-main','templates'])
       });
   });
 
-
-angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav','ui.grid.pagination'])
+angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.bootstrap'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
@@ -17,86 +16,36 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
         controller: 'MainCtrl'
       });
   })
-  .controller('MainCtrl', function ($scope,$injector,vfr,$interval,$q) {
-
-    var queryArray=[];                      //Storing All query variable Which Will Be Used To From Query With Where Clause
-    var queryString ='';                    //Store SOQL Query in String Format
-    var convertedDate = '';
+  .controller('MainCtrl', function ($scope,$injector,vfr,$interval,$q, $rootScope) {
+    var queryArray=[];             //Array of query variable Which Will Be Used To From Query With Where Clause
     var first = '';
+    var queryString ='';              //Store SOQL Query in String Format
+    var convertedDate = '';
     var firstDayOfWeek = '';              
     var lastDayOfWeek = '';
   
-    $scope.Users = {};
-    $scope.Projects = {};
-    $scope.selectedUser='';
-    $scope.selectedProject='';
-    $scope.date='';
-    // $scope.disableButton="true";
+    $scope.date = '';
+    $scope.selectedUser = '';
+    $scope.noRecordsMsg = '';
+    $scope.tableHide = true;
+    $scope.disableButton = true;
+    $scope.Users = [];
+    $scope.Projects = [];
+    $scope.ArrayToSort = [];
     $scope.ResourceBooking = {};             //Object Storing Queried data of Resource_Booking__c
+    $scope.DisplayResourceBooking = [];
 
-    $scope.GridDisplayData ={};              //This Object Is Holding data to display in a grid  
+    $scope.sortingOrder = 'asc';
+    $scope.currentSortField = 'User__c';
 
-/*------------------------------------------------Generating column and Row Data for Grid-----------------------------------------------*/
-    $scope.ResourceBooking = {
-    paginationPageSizes: [5, 10, 75],
-    paginationPageSize: 5,
-    columnDefs : [
-      { name: 'User__c', displayName: 'User'},
-      { name: 'Project__c', displayName: 'Project' },
-      { name: 'Date__c', displayName: 'Date' , type: 'date', cellFilter: 'date:"dd-MM-yyyy"'},
-      { name: 'SundayHours__c', displayName: 'Sunday' , type: 'number', enableCellEdit: false},
-      { name: 'MondayHours__c', displayName: 'Monday' , type: 'number'},
-      { name: 'TuesdayHours__c', displayName: 'Tuesday' , type: 'number'},
-      { name: 'WednesdayHours__c', displayName: 'Wednesday' , type: 'number'},
-      { name: 'ThursdayHours__c', displayName: 'Thursday' , type: 'number'},
-      { name: 'FridayHours__c', displayName: 'Friday' , type: 'number'},
-      { name: 'SaturdayHours__c', displayName: 'Saturday' , type: 'number', enableCellEdit: false}
-    ] 
-  };
+    $scope.totalItems = '';
+    $scope.currentPage = 2;
+    $scope.itemsPerPage = 4;
 
-/*--------------------------Function Is Called Implecitely Whenever the Cell Data Is Edited-----------------------------------------------*/  
-  $scope.saveRow = function(rowEntity) {
-    var updateObj = rowEntity;
-    var objId = updateObj.Id;
-    delete updateObj.Id;
-    delete updateObj.attributes;
-    delete updateObj.Name;
-    delete updateObj.Project__c;
-
-    // console.log('updateObj.Date__c------',Date(updateObj.Date__c));
-
-    first = new Date(updateObj.Date__c).getDate() - new Date(updateObj.Date__c).getDay();    // First day =day of the month - the day of the week
-    updateObj.Date__c = $scope.formatDate(new Date(new Date(updateObj.Date__c).setDate(first)));
-    // console.log('updateObj.Date__c----+++--',updateObj.Date__c);
-    // console.log('updateObj------',updateObj);
-    vfr.update('Resource_Booking__c', objId, angular.toJson(updateObj))
-        .then(function(result){
-          console.log('result',result);
-          $q.resolve();          
-        }, function(error){
-          console.error('error', error);
-        });                                                                        
-    $interval( function() {                                // fake a delay of 3 seconds whilst the save occurs.      
-    }, 3000, 1);                                           //Wait for 3 seconds before initiating update call
-    
-    /*var promise = $q.defer();                       
-    $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise.promise);
-    promise.resolve();*/
-    
-  };
-
-/*-------------------------------------------------------Set gridApi On Scope-----------------------------------------------------------*/ 
-  $scope.ResourceBooking.onRegisterApi = function(gridApi){
-    $scope.gridApi = gridApi;                                          
-    gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-  };
-
-/*--------------------------------------------Function Queries All Standard Users In The Org--------------------------------------------*/
-  $scope.queryUsers=function(){
+    $scope.queryUsers=function(){
       queryString = "SELECT Id,Name,UserType FROM User WHERE UserType = 'Standard'";
       vfr.query(queryString)
         .then(function(result){
-          //console.log('result',result);
           $scope.Users = result.records;
         }, function(error){
           console.error('error', error);
@@ -104,12 +53,10 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
     }
     $scope.queryUsers();
 
-/*------------------------------Function Queries All Project__c Records In The Org TO Form a DropDown List-------------------------------*/
     $scope.queryProjects=function(){
       queryString = "SELECT Id,Name FROM Project__c";
       vfr.query(queryString)
         .then(function(result){
-          //console.log('result',result);
           $scope.Projects = result.records;
         }, function(error){
           console.error('error', error);
@@ -117,49 +64,48 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
     }
     $scope.queryProjects();
 
-/*-------------------------Function Queries All Resource_Booking__c Record For selected Date's Week-----------------------------------------*/
     $scope.queryResouceData=function(){      
-      queryString = 'SELECT Date__c,'+
+      queryString = 'SELECT'+
                       ' Id,'+
                       ' Name,'+
                       ' User__c,'+
+                      ' Date__c,'+
                       ' Project__c,'+
                       ' SundayHours__c,'+
                       ' MondayHours__c,'+
-                      ' TuesdayHours__c,'+
-                      ' WednesdayHours__c,'+
-                      ' ThursdayHours__c,'+
                       ' FridayHours__c,'+
-                      ' SaturdayHours__c'+
+                      ' SaturdayHours__c,'+
+                      ' TuesdayHours__c,'+
+                      ' ThursdayHours__c,'+
+                      ' WednesdayHours__c'+
                       ' FROM Resource_Booking__c';
             
       if(queryArray.length > 0){
         queryString = queryString +' WHERE ';
         queryString = queryString + queryArray.join(' And ');
-      }
-      console.log('Query String--',queryString);    
+      }    
       vfr.query(queryString)
         .then(function(result){
-          console.log('result',result);
-          console.log('result-------------==',result);
-          $scope.ResourceBooking.data = result.records;
 
-          console.log('$scope.ResourceBooking.data---++',$scope.ResourceBooking.data);
-          queryArray =[];
+          if(result.records.length>0){
+            queryArray =[];
+            $scope.noRecordsMsg='';
+            $scope.ResourceBooking = result.records;
+            $scope.totalItems = $scope.ResourceBooking.length;
+          
+          }else{
+            queryArray =[];
+            $scope.noRecordsMsg='No Records For Selected Date.';
+          }
         }, function(error){
-          console.error('error', error);
           queryArray =[];
+          console.error('error', error);
         });
-
-        $scope.GridDisplayData = $scope.ResourceBooking.data;
-        console.log('$scope.GridDisplayData--',$scope.GridDisplayData);
     }
 
-/*--------------------------------------------------------------------------------------------------------------------------------------*/
     $scope.buildQuery=function(){
       convertedDate = new Date($scope.date);
-      console.log('convertedDate',convertedDate);
-      first = convertedDate.getDate() - convertedDate.getDay();                           // First day =day of the month - the day of the week
+      first = convertedDate.getDate() - convertedDate.getDay();      // First day =day of the month - the day of the week
       firstDayOfWeek = new Date(convertedDate.setDate(first));
       lastDayOfWeek = new Date(convertedDate.setDate(first+6));
 
@@ -175,26 +121,131 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.grid'
       if(angular.isDefined($scope.selectedProject) && $scope.selectedProject!=''){
       queryArray.push("Project__c = '"+ $scope.selectedProject + "'");
       }
-      $scope.queryResouceData();                                                //Call to queryResouceData() after rquiered variable gets data
+      $scope.queryResouceData();                                //Call to queryResouceData() after rquiered variable gets data
+      $scope.tableHide = false;
     }
 
-/*---------------------------------------------------Format Date as requiered in SOQL query------------------------------------------------*/
     $scope.formatDate=function(DayOfWeek){
-      var year = new Date(DayOfWeek).getFullYear();
-      var month = new Date(DayOfWeek).getMonth()+1;
       var date = new Date(DayOfWeek).getDate();
-      var formatedDate = year+'-0' + month + '-'+date; 
+      var month = new Date(DayOfWeek).getMonth()+1;
+      var year = new Date(DayOfWeek).getFullYear();
+      if(date<10){
+        date = '0'+date;
+      }
+      if(month<10){
+        month = '0'+month;
+      }
+      var formatedDate = year+'-'+month+'-'+date; 
       return formatedDate;
     }
 
-/*------------------------------------------------------Watcher To Enable/Disable GetValues Button-----------------------------------------*/
-    /*$scope.$watch("date", function (newValue) {
-      console.log('watcher RUN-----------');
-      $scope.disableButton= "false";
-    });*/
-/*------------------------------------------------------Add New Row to Grid on ButtonClick-----------------------------------------*/
-  $scope.addRow = function(){
-    $scope.ResourceBooking.data.push({}); 
-  }
-  
-  });
+    $scope.sortColumn = function(col) {
+      // console.log('rootscope User', $rootScope.User);
+      // console.log('rootscope project', $rootScope.Project__c);
+      if($scope.currentSortField != col) {
+        $scope.currentSortField = col;
+        $scope.sortingOrder = 'asc';
+      } else {
+        if($scope.sortingOrder == 'asc') {
+          $scope.sortingOrder = 'desc';
+        } else {
+          $scope.sortingOrder = 'asc';
+        }
+      }
+      sorter();
+    }
+   
+    function sorter(){
+      var sortingField = angular.copy($scope.currentSortField);
+      var sortingFieldUser = angular.copy($scope.currentSortField);
+      var sortingOrder = angular.copy($scope.sortingOrder);
+      $scope.ResourceBooking.sort(function(a, b){
+        var sortingVarA = '';
+        var sortingVarB = '';
+        if(sortingField == 'Project__c' || sortingField == 'User__c'){
+          
+          if(sortingField == 'User__c'){
+            sortingField = 'User';
+            sortingFieldUser = 'User__c';
+          }
+
+          sortingVarA = $rootScope[sortingField][a[sortingFieldUser]];
+          sortingVarB = $rootScope[sortingField][b[sortingFieldUser]];
+          if(sortingOrder == 'asc') {
+          return sortingVarA < sortingVarB;
+          } else {
+            return sortingVarA > sortingVarB;
+          }
+        } else {
+          var dateA = new Date(a[sortingField]);
+          var dateB = new Date(b[sortingField]);
+          if(sortingOrder == 'asc') {
+            return dateA > dateB;
+          } else {
+            return dateA < dateB ;
+          }
+        }        
+      });
+    }
+
+    $scope.$watch("date", function (newValue,oldValue) {
+      if(newValue != oldValue){
+        $scope.disableButton = false;
+      }
+    });
+    $scope.addRow = function(){
+       $scope.ResourceBooking.push({});
+       $scope.totalItems = $scope.totalItems +1;
+      /*$scope.ResourceBooking.push({'Date__c':'','Project__c':'','SaturdayHours__c':'',
+                                    'SundayHours__c':'','MondayHours__c':'','TuesdayHours__c':'',
+                                    'WednesdayHours__c':'', 'ThursdayHours__c':'','FridayHours__c':''});*/
+    }
+})
+.directive("typeaheadDirective",function(){
+    return{
+      scope: {
+        type: '@',
+        currData: '='
+      },
+      templateUrl: "views/typeaheadDirective.html",
+      controller: function($scope, $rootScope, vfr) {
+        if(!$rootScope[$scope.type]) {
+          $rootScope[$scope.type] = {};
+        }
+        vfr.query("Select Id, Name from " + $scope.type + " where Id='" + $scope.currData + "'")
+            .then(function(res){
+              $scope.recName = (angular.isDefined(res.records[0])) ? res.records[0].Name : '';
+              $rootScope[$scope.type][res.records[0].Id] = res.records[0].Name;
+            });
+        
+        $scope.fetchRecordFromSobject = function(item) {
+          var successFunction = function(result) {
+            var records = [];
+            angular.forEach(result.records, function(record, index){
+              records.push({
+                Name: record.Name,
+                Id: record.Id
+              });
+            });
+            return records;
+          } 
+          var failureFunction = function(error) {
+            console.error('error', error);
+          }
+          return vfr.query('Select Id, Name from ' + $scope.type).then(successFunction, failureFunction);
+        }
+
+        $scope.onSelect = function($item, $model, $label, $event){
+          console.log('$item',$item.Id);
+          $scope.recName = $label;
+          $scope.currData = $model;
+        }
+
+        $scope.onNgChange = function() {
+          if($scope.recName || $scope.recName == '') {
+            $scope.currData = '';
+          }
+        }
+      }
+    };
+});
