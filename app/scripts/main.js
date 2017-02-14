@@ -28,7 +28,8 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
     $scope.selectedUser = '';
     $scope.noRecordsMsg = '';
     $scope.tableHide = true;
-    $scope.disableButton = true;
+    $scope.disableGetDataButton = true;
+    $scope.disableAddRowButton = true;
     $scope.Users = [];
     $scope.Projects = [];
     $scope.ArrayToSort = [];
@@ -37,7 +38,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
 
     $scope.sortingOrder = 'asc';
     $scope.currentSortField = 'User__c';
-
+    $scope.editedRow ='';
     $scope.totalItems = '';
     $scope.currentPage = 2;
     $scope.itemsPerPage = 4;
@@ -126,6 +127,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
       }
       $scope.queryResouceData();                                //Call to queryResouceData() after rquiered variable gets data
       $scope.tableHide = false;
+      $scope.disableAddRowButton = false;
     }
 
     $scope.formatDate=function(DayOfWeek){
@@ -193,7 +195,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
 
     $scope.$watch("date", function (newValue,oldValue) {
       if(newValue != oldValue){
-        $scope.disableButton = false;
+        $scope.disableGetDataButton = false;
       }
     });
     $scope.addRow = function(){
@@ -210,6 +212,42 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
     $scope.setDate = function(year, month, day) {
       $scope.date = new Date(year, month, day);
     };
+
+
+    $scope.saveIt = function(rowEntity) {
+      var updateObj = angular.copy(rowEntity);
+      var objId = updateObj.Id;      
+      delete updateObj.attributes;
+
+      if(angular.isDefined(rowEntity.Id)){
+        delete updateObj.User_Name;
+        delete updateObj.Project_Name;
+        delete updateObj.Id;
+        delete updateObj.Name;
+        delete updateObj.Project__c;
+
+        first = new Date(updateObj.Date__c).getDate() - new Date(updateObj.Date__c).getDay();    
+        updateObj.Date__c = $scope.formatDate(new Date(new Date(updateObj.Date__c).setDate(first)));
+
+        vfr.update('Resource_Booking__c', objId, angular.toJson(updateObj))
+          .then(function(result){
+            console.log('Record Updated Successfully');
+            $q.resolve();          
+          }, function(error){
+            console.error('error', error);
+          }); 
+    }else{
+      console.log('rowEntity w/o Id',updateObj);
+
+      vfr.create('Resource_Booking__c', angular.toJson(updateObj))
+        .then(function(result){
+            console.log('Record Created Successfully');
+            $q.resolve();          
+          }, function(error){
+            console.error('error', error);
+        });       
+    } 
+  };
 })
 .directive("typeaheadDirective",function(){
     return{
@@ -259,4 +297,23 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
         }
       }
     };
+})
+.directive("dateDirective",function(){
+  return{
+    scope: {
+      tblDate: '=',
+      dateFormat: '@'
+    },
+    templateUrl:"views/dateDirective.html",
+    controller: function($scope, $rootScope, vfr) {
+      $scope.tblDate = new Date($scope.tblDate);
+      
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };        
+      $scope.popup1 = {
+        opened: false
+      };
+    }
+  };
 });
