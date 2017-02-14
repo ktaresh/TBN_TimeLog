@@ -1,13 +1,15 @@
-<apex:page>
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false">
   <apex:stylesheet value="{!URLFOR($Resource.TBN_TimeLog, 'styles/lib.css')}"></apex:stylesheet>
   <apex:stylesheet value="{!URLFOR($Resource.TBN_TimeLog, 'styles/main.css')}"></apex:stylesheet>
+  <apex:stylesheet value="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+   <apex:stylesheet value="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"></apex:stylesheet>
   <head>
     <meta charset="utf-8"></meta>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"></meta>
     <title>TBN_TimeLog</title>
   </head>
   <body>
-    <div id="sl" ng-app="TBN_TimeLog">
+    <div id="sl" ng-app="demoPage">
       <div id="sl-body">
         <div class="container" ng-view="ng-view"></div>
       </div>
@@ -15,7 +17,6 @@
     <apex:includescript value="{!URLFOR($Resource.TBN_TimeLog, 'scripts/lib.js')}"></apex:includescript>
     <apex:includescript value="{!URLFOR($Resource.TBN_TimeLog, 'scripts/templates.js')}"></apex:includescript>
     <apex:includescript value="{!URLFOR($Resource.TBN_TimeLog, 'scripts/main.js')}"></apex:includescript>
-    <c:ngForce></c:ngForce>
+    <c:ngforce ></c:ngforce>
   </body>
-
 </apex:page>
