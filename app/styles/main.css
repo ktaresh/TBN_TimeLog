@@ -1,33 +1,18 @@
-/*.container { background-color: antiquewhite;}*/
+
 .rootDiv{
 	width: 100%;
 	margin-top: 5%;
 }
 select{
-width:90%;
+	width:90%;
 }
 
-.weekdaysTime{
-	width:65%;
-	text-align: center;
-}
-
-.dataRows:nth-child(even){
-	background-color: #138EFA;
-}
-
-.tableRes  {
-	border-collapse:collapse;
-	border-spacing:0;
-	border-color:#999;
-}
 .tableRes td{
 	font-family:Arial, sans-serif;
 	font-size:14px;
 	padding:10px 5px;
 	border-style:solid;
 	border-width:1px;
-	overflow:hidden;
 	word-break:normal;
 	border-color:#999;
 	color:#444;
@@ -57,9 +42,37 @@ width:90%;
 }
 
 .btn-primary option{
-    background-color: #ffffff !important;
+    	background-color: #ffffff !important;
    	color: #070707 !important;
 }
 
+.btn-cal{
+	padding: 6px 12px !important;
+    	padding-top: 9px !important;
+    	padding-right: 9px !important;
+    	padding-bottom: 9px !important;
+    	padding-left: 12px !important;
+}
+
+.btn-calTbl{
+	padding: 6px 10px !important;
+    	padding-top: 9px !important;
+    	padding-right: 9px !important;
+    	padding-bottom: 9px !important;
+    	padding-left: 10px !important;
+}
+
+.inputCalTbl{
+	width: 8em !important;
+}
+
+.input-hrs{
+	width: 60% !important;
+	text-align: center !important;
+}
+
+.input-typeAhead{
+	width: 8em !important;
+}
 
 
