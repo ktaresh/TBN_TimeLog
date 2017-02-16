@@ -19,7 +19,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','ui.bootstrap'])
   .controller('MainCtrl', function ($scope,$injector,vfr,$interval,$q, $rootScope) {
     var queryArray=[];             //Array of query variable Which Will Be Used To From Query With Where Clause
     var first = '';
-    var queryString ='';              //Store SOQL Query in String Format
+    var queryString ='';          //Store SOQL Query in String Format
     var convertedDate = '';
     var firstDayOfWeek = '';              
     var lastDayOfWeek = '';
@@ -37,6 +37,12 @@ angular.module('demoPage-main',['ngRoute','ngForce','ui.bootstrap'])
     $scope.DisplayResourceBooking = [];
     $scope.totalItems = '';
     
+    $scope.sortingOrder = 'asc';
+    $scope.currentSortField = 'User__c';
+    $scope.editedRow ='';      
+    $scope.currentPage = 2;
+    $scope.itemsPerPage = 4;
+
     $scope.popup = {
       opened: false
     };
@@ -120,7 +126,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','ui.bootstrap'])
       if(angular.isDefined($scope.selectedProject) && $scope.selectedProject!=''){
       queryArray.push("Project__c = '"+ $scope.selectedProject + "'");
       }
-      $scope.queryResouceData();                                //Call to queryResouceData() after rquiered variable gets data
+      $scope.queryResouceData();                 //Call to queryResouceData() after rquiered variable gets data
       $scope.tableHide = false;
       $scope.disableAddRowButton = false;
     }
@@ -143,7 +149,54 @@ angular.module('demoPage-main',['ngRoute','ngForce','ui.bootstrap'])
       if(newValue != oldValue){
         $scope.disableGetDataButton = false;
       }
-    });    
+    }); 
+
+    $scope.sortColumn = function(col) {
+        if($scope.currentSortField != col) {
+          $scope.currentSortField = col;
+          $scope.sortingOrder = 'asc';
+        } else {
+          if($scope.sortingOrder == 'asc') {
+            $scope.sortingOrder = 'desc';
+          } else {
+            $scope.sortingOrder = 'asc';
+          }
+        }
+        sorter();
+      }
+   
+      function sorter(){
+        var sortingField = angular.copy($scope.currentSortField);
+        var sortingFieldUser = angular.copy($scope.currentSortField);
+        var sortingOrder = angular.copy($scope.sortingOrder);
+        $scope.ResourceBooking.sort(function(a, b){
+          var sortingVarA = '';
+          var sortingVarB = '';
+          if(sortingField == 'Project__c' || sortingField == 'User__c'){
+            
+            if(sortingField == 'User__c'){
+              sortingField = 'User';
+              sortingFieldUser = 'User__c';
+            }
+
+            sortingVarA = $rootScope[sortingField][a[sortingFieldUser]];
+            sortingVarB = $rootScope[sortingField][b[sortingFieldUser]];
+            if(sortingOrder == 'asc') {
+              return sortingVarA < sortingVarB;
+            } else {
+                return sortingVarA > sortingVarB;
+            }
+          } else {
+            var dateA = new Date(a[sortingField]);
+            var dateB = new Date(b[sortingField]);
+            if(sortingOrder == 'asc') {
+              return dateA > dateB;
+            } else {
+              return dateA < dateB ;
+            }
+          }        
+        });
+      }    
 
     $scope.openDatePicker = function() {
       $scope.popup.opened = true;
@@ -192,67 +245,20 @@ angular.module('demoPage-main',['ngRoute','ngForce','ui.bootstrap'])
       } 
     };
 })
-.directive("tableDirective",function(){
+.directive("dayDirective",function(){
   return{
     scope: {
-      displayObj: '=',
-      totalItem: '='
+      displayObj: '='
     },
-    templateUrl:"views/tableDirective.html",
-    controller: function($scope, $rootScope, vfr) {
+    templateUrl:"views/dayDirective.html",
+    controller: function($scope, $rootScope, vfr) {     
 
-      $scope.sortingOrder = 'asc';
-      $scope.currentSortField = 'User__c';
-      $scope.editedRow ='';      
-      $scope.currentPage = 2;
-      $scope.itemsPerPage = 4;      
-      
-      $scope.sortColumn = function(col) {
-        if($scope.currentSortField != col) {
-          $scope.currentSortField = col;
-          $scope.sortingOrder = 'asc';
-        } else {
-          if($scope.sortingOrder == 'asc') {
-            $scope.sortingOrder = 'desc';
-          } else {
-            $scope.sortingOrder = 'asc';
-          }
+      $scope.$watch("displayObj", function (newValue,oldValue) {
+        if(newValue != oldValue){
+          console.log('new displayObj value->>',$scope.displayObj);
         }
-        sorter();
-      }
-   
-      function sorter(){
-        var sortingField = angular.copy($scope.currentSortField);
-        var sortingFieldUser = angular.copy($scope.currentSortField);
-        var sortingOrder = angular.copy($scope.sortingOrder);
-        $scope.displayObj.sort(function(a, b){
-          var sortingVarA = '';
-          var sortingVarB = '';
-          if(sortingField == 'Project__c' || sortingField == 'User__c'){
-            
-            if(sortingField == 'User__c'){
-              sortingField = 'User';
-              sortingFieldUser = 'User__c';
-            }
+      }); 
 
-            sortingVarA = $rootScope[sortingField][a[sortingFieldUser]];
-            sortingVarB = $rootScope[sortingField][b[sortingFieldUser]];
-            if(sortingOrder == 'asc') {
-              return sortingVarA < sortingVarB;
-            } else {
-                return sortingVarA > sortingVarB;
-            }
-          } else {
-            var dateA = new Date(a[sortingField]);
-            var dateB = new Date(b[sortingField]);
-            if(sortingOrder == 'asc') {
-              return dateA > dateB;
-            } else {
-              return dateA < dateB ;
-            }
-          }        
-        });
-      }  
     }
   };
 })
