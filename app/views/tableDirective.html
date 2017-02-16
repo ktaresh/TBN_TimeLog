@@ -1,0 +1,97 @@
+<div class="divTable" ng-model="displayObj">
+        <div class="divTableBody">
+          <div class="divTableRow">
+              <div class="divTableCell divTableHeading" ng-click="sortColumn('User__c')">
+                User <i class="fa fa-sort-{{sortingOrder}}" ng-show="currentSortField == 'User__c'"></i>
+              </div>
+              <div class="divTableCell divTableHeading" ng-click="sortColumn('Project__c')">
+                Project <i class="fa fa-sort-{{sortingOrder}}" ng-show="currentSortField == 'Project__c'"></i>
+              </div>
+              <div class="divTableCell divTableHeading" ng-click="sortColumn('Date__c')">
+                Date <i class="fa fa-sort-{{sortingOrder}}" ng-show="currentSortField == 'Date__c'"></i>
+              </div>
+              <div class="divTableCell divTableHeading">
+                Sunday
+              </div>
+              <div class="divTableCell divTableHeading">
+                Monday
+              </div>
+              <div class="divTableCell divTableHeading">
+                Tuesday
+              </div>
+              <div class="divTableCell divTableHeading">
+                Wednesday
+              </div>
+              <div class="divTableCell divTableHeading">
+                Thursday
+              </div>
+              <div class="divTableCell divTableHeading">
+                Friday
+              </div>
+              <div class="divTableCell divTableHeading">
+                Saturday
+              </div>
+          </div>
+          <div ng-repeat="ResourceBooking in displayObj.slice(((currentPage-1)*itemsPerPage),((currentPage)*itemsPerPage))"
+                class="divTableRow">
+              <div class="divTableCell input-typeAheadNameCell">
+                <typeahead-Directive type="User" 
+                          curr-Data="ResourceBooking.User__c"/>
+              </div>
+              <div class="divTableCell input-typeAheadNameCell">
+                <typeahead-Directive type="Project__c" 
+                          curr-Data="ResourceBooking.Project__c"/>
+              </div>
+              <div class="divTableCell input-typeAheadDateCell">
+                <date-Directive tbl-Date="ResourceBooking.Date__c" 
+                        format="{{dateFormat}}"/>
+              </div>
+              <div class="divTableCell">
+                <input type="text" ng-disabled="true"
+                                    ng-model="ResourceBooking.SundayHours__c" 
+                                    class="form-control input-hrs"/>
+              </div>
+              <div class="divTableCell">
+                <input type="text" ng-model="ResourceBooking.MondayHours__c" 
+                            class="form-control input-hrs"/>
+              </div>
+              <div class="divTableCell">
+                <input type="text" ng-model="ResourceBooking.TuesdayHours__c" 
+                            class="form-control input-hrs"/>
+              </div>
+              <div class="divTableCell">
+                <input type="text" ng-model="ResourceBooking.WednesdayHours__c" 
+                            class="form-control input-hrs"/>
+              </div>
+              <div class="divTableCell">
+                <input type="text" ng-model="ResourceBooking.ThursdayHours__c" 
+                            class="form-control input-hrs"/>
+              </div>
+              <div class="divTableCell">
+                <input type="text" ng-model="ResourceBooking.FridayHours__c" 
+                            class="form-control input-hrs"/>
+              </div>
+              <div class="divTableCell">
+                <input type="text" ng-disabled="true"
+                                    ng-model="ResourceBooking.SaturdayHours__c" 
+                                    class="form-control input-hrs"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+     <div style="text-align:center; margin:0 auto;">
+      <ul uib-pager ng-model="currentPage" total-items="totalItem" 
+                      items-per-page="itemsPerPage" 
+                      next-text="Next>>" 
+                      previous-text="<<Previous"></ul>
+    </div> 
+    <p style="color:red;">{{noRecordsMsg}}</p>
+    <div align="center">
+      <button type="button" class="btn btn-primary" ng-click="saveIt()" style="padding-left:15px; padding-right:15px;">
+          Save
+        </button>
+        <button type="button" class="btn btn-primary" ng-click="buildQuery()" style="margin-left:5%;"">
+          Cancel
+        </button>
+      </div>  
