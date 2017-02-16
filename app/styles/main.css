@@ -1,38 +1,27 @@
-
 .rootDiv{
 	width: 100%;
-	margin-top: 5%;
+	margin-top: 3%;
 }
 select{
-	width:90%;
+width:90%;
 }
 
-.tableRes td{
-	font-family:Arial, sans-serif;
-	font-size:14px;
-	padding:10px 5px;
-	border-style:solid;
-	border-width:1px;
-	word-break:normal;
-	border-color:#999;
-	color:#444;
-	background-color:#F7FDFA;
+.divTable{
+	/*display: table;*/
+	width: 100%;
 }
-.tableRes th{
-	font-family:Arial, sans-serif;
-	font-size:14px;
-	font-weight:normal;
-	padding:10px 5px;
-	border-style:solid;
-	border-width:1px;
-	overflow:hidden;
-	word-break:normal;
-	border-color:#999;
-	color:#fff;
-	background-color:#138EFA;
+.divTableRow {
+	display: table-row;
+	border-collapse: collapse;
 }
-.tableRes .ResDataCell{
-	background-color:#D2E4FC;
+.divTableCell, .divTableHead {
+	border: 1px solid #999999;
+	display: table-cell;
+	padding: 3px 10px;
+}
+.divTableHeading {
+	background-color: #138EFA;
+	color: #EEE;
 }
 
 .btn-primary {
@@ -42,37 +31,50 @@ select{
 }
 
 .btn-primary option{
-    	background-color: #ffffff !important;
+    background-color: #ffffff !important;
    	color: #070707 !important;
 }
 
 .btn-cal{
 	padding: 6px 12px !important;
-    	padding-top: 9px !important;
-    	padding-right: 9px !important;
-    	padding-bottom: 9px !important;
-    	padding-left: 12px !important;
+    padding-top: 9px !important;
+    padding-right: 9px !important;
+    padding-bottom: 9px !important;
+    padding-left: 12px !important;
 }
 
 .btn-calTbl{
 	padding: 6px 10px !important;
-    	padding-top: 9px !important;
-    	padding-right: 9px !important;
-    	padding-bottom: 9px !important;
-    	padding-left: 10px !important;
+    padding-top: 9px !important;
+    padding-right: 9px !important;
+    padding-bottom: 9px !important;
+    padding-left: 10px !important;
 }
 
 .inputCalTbl{
-	width: 8em !important;
+	width: 100% !important;
 }
 
 .input-hrs{
 	width: 60% !important;
 	text-align: center !important;
+	padding: 5px 5px !important;
+    padding-top: 5px !important;
+    padding-right: 5px !important;
+    padding-bottom: 5px !important;
+    padding-left: 5x !important;
 }
 
 .input-typeAhead{
-	width: 8em !important;
+	width: 100% !important;
+}
+.input-typeAheadNameCell{
+	width: 23% !important;
 }
 
-
+.input-typeAheadDateCell{
+	width: 34% !important;
+}
+.input-group{
+	width: 90% !important;
+}
