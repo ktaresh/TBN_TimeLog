@@ -1,141 +1,50 @@
 <div class="rootDiv" >
-  <div style="width: 20%;float:left;">
+  <div style="width: 17%;float:left;">
     <div >
       <h4>Date:</h4> 
             <div class="input-group">
-                <input type="text" class="form-control" uib-datepicker-popup ng-model="date" 
-                        is-open="popup.opened" 
-                        datepicker-options="dateOptions" 
-                        ng-required="true" 
-                        close-text="Close"/>
+              <input type="text" class="form-control" uib-datepicker-popup ng-model="date" 
+                      is-open="popup.opened" 
+                      datepicker-options="dateOptions" 
+                      ng-required="true" 
+                      close-text="Close"/>
               <span class="input-group-btn">
                 <button type="button" class="btn btn-default btn-cal" ng-click="openDatePicker()">
-                    <i class="glyphicon glyphicon-calendar"></i>
-                  </button>
+                  <i class="glyphicon glyphicon-calendar"></i>
+                </button>
               </span>
             </div>
     </div><br>
 
     <div>
-    <h4>User:</h4> 
+      <h4>User:</h4> 
         <select ng-model="selectedUser" class="btn btn-primary dropdown-toggle">
           <option value="">--None--</option>
-              <option ng-repeat="User in Users" value="{{User.Id}}">{{User.Name}}</option>
-          </select>
-      </div><br>
+          <option ng-repeat="User in Users" value="{{User.Id}}">{{User.Name}}</option>
+        </select>
+    </div><br>
       
-      <div>     
+    <div>     
       <h4>Project:</h4> 
-          <select ng-model="selectedProject" class="btn btn-primary dropdown-toggle">
+        <select ng-model="selectedProject" class="btn btn-primary dropdown-toggle">
           <option value="">--None--</option>
-              <option ng-repeat="Project in Projects" value="{{Project.Id}}">{{Project.Name}}</option>
-          </select>
-      </div><br>
+          <option ng-repeat="Project in Projects" value="{{Project.Id}}">{{Project.Name}}</option>
+        </select>
+    </div><br>
       
-        <button type="button" class="btn btn-primary" ng-disabled="disableGetDataButton" ng-click="buildQuery()">
-          Get Data
-        </button>
+    <button type="button" class="btn btn-primary" ng-disabled="disableGetDataButton" ng-click="buildQuery()">
+      Get Data
+    </button>
 
-        <button type="button" class="btn btn-primary" ng-disabled="disableAddRowButton" ng-click="addRow()" style="margin-left:15%;"">
-          Add Row
-        </button>
+    <button type="button" class="btn btn-primary" ng-disabled="disableAddRowButton" ng-click="addRow()" 
+            style="margin-left:3%;">
+      Add Row
+    </button>
 
   </div>
 
-
-  <div style="width: 80%;float:left;" class="tg-wrap" ng-hide="tableHide">
-    
-      <table id="tableResId" class="tableRes" >
-      <tr>
-        <th class="ResDataHeader" ng-click="sortColumn('User__c')" >
-          User <i class="fa fa-sort-{{sortingOrder}}" ng-show="currentSortField == 'User__c'"></i>
-        </th>
-        <th class="ResDataHeader" ng-click="sortColumn('Project__c')">
-          Project <i class="fa fa-sort-{{sortingOrder}}" ng-show="currentSortField == 'Project__c'"></i>
-        </th>
-        <th class="ResDataHeader" ng-click="sortColumn('Date__c')">
-          Date <i class="fa fa-sort-{{sortingOrder}}" ng-show="currentSortField == 'Date__c'"></i>
-        </th>
-        <th class="ResDataHeader" >Sunday</th>
-        <th class="ResDataHeader" >Monday</th>
-        <th class="ResDataHeader">Tuesday</th>
-        <th class="ResDataHeader" >Wednesday</th>
-        <th class="ResDataHeader" >Thursday</th>
-        <th class="ResDataHeader" >Friday</th>
-        <th class="ResDataHeader" >Saturday</th>
-      </tr>
-
-      <tr ng-repeat="ResourceBooking in ResourceBooking.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage))" 
-        class="dataRows">
-        <td class="ResDataCell">
-          <typeahead-Directive type="User" 
-                     curr-Data="ResourceBooking.User__c"/>
-        </td>
-
-        <td class="ResDataCell">
-          <typeahead-Directive type="Project__c" 
-                     curr-Data="ResourceBooking.Project__c"/>
-        </td>
-
-        <td class="ResDataCell">
-          <!-- <input type="text" ng-model="ResourceBooking.Date__c" /> -->
-          <date-Directive tbl-Date="ResourceBooking.Date__c" 
-                  format="{{dateFormat}}"/>
-        </td>
-
-        <td class="ResDataCell">
-          <input type="text" ng-disabled="true" 
-                    ng-model="ResourceBooking.SundayHours__c" 
-                    class="form-control input-hrs"/>
-        </td>
-
-        <td class="ResDataCell">
-          <input type="text" ng-model="ResourceBooking.MondayHours__c" 
-                    class="form-control input-hrs"/>
-        </td>
-
-        <td class="ResDataCell">
-          <input type="text" ng-model="ResourceBooking.TuesdayHours__c" 
-                    class="form-control input-hrs"/>
-        </td>
-
-        <td class="ResDataCell">
-          <input type="text" ng-model="ResourceBooking.WednesdayHours__c" 
-                    class="form-control input-hrs"/>
-        </td>
-
-        <td class="ResDataCell">
-          <input type="text" ng-model="ResourceBooking.ThursdayHours__c" 
-                    class="form-control input-hrs"/>
-        </td>
-
-        <td class="ResDataCell">
-          <input type="text" ng-model="ResourceBooking.FridayHours__c" 
-                    class="form-control input-hrs"/>
-        </td>
-
-        <td class="ResDataCell">
-          <input type="text" ng-disabled="true" 
-                    ng-model="ResourceBooking.SaturdayHours__c" 
-                    class="form-control input-hrs"/>
-        </td>
-      </tr>
-    </table>
-     <div style="text-align:center; margin:0 auto;">
-      <ul uib-pager ng-model="currentPage" total-items="totalItems" 
-                        items-per-page="itemsPerPage" 
-                        next-text="Next>>" 
-                        previous-text="<<Previous"></ul>
-    </div> 
-    <p style="color:red;">{{noRecordsMsg}}</p>
-    <div align="center">
-      <button type="button" class="btn btn-primary" ng-click="saveIt()" style="padding-left: 15px;padding-right: 15px;">
-          Save
-        </button>
-        <button type="button" class="btn btn-primary" ng-click="buildQuery()" style="margin-left:5%;"">
-          Cancel
-        </button>
-      </div>  
+  <div style="width: 83%; float:left;" class="tg-wrap" ng-hide="tableHide">    
+      <table-Directive display-Obj="ResourceBooking" total-Item="totalItems"/>
   </div>  
 
 </div>
