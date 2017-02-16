@@ -8,7 +8,7 @@ angular.module('demoPage', ['ngRoute','demoPage-main','templates'])
       });
   });
 
-angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.bootstrap'])
+angular.module('demoPage-main',['ngRoute','ngForce','ui.bootstrap'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
@@ -35,13 +35,8 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
     $scope.ArrayToSort = [];
     $scope.ResourceBooking = {};             //Object Storing Queried data of Resource_Booking__c
     $scope.DisplayResourceBooking = [];
-
-    $scope.sortingOrder = 'asc';
-    $scope.currentSortField = 'User__c';
-    $scope.editedRow ='';
     $scope.totalItems = '';
-    $scope.currentPage = 2;
-    $scope.itemsPerPage = 4;
+    
     $scope.popup = {
       opened: false
     };
@@ -144,75 +139,23 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
       return formatedDate;
     }
 
-    $scope.sortColumn = function(col) {
-      // console.log('rootscope User', $rootScope.User);
-      // console.log('rootscope project', $rootScope.Project__c);
-      if($scope.currentSortField != col) {
-        $scope.currentSortField = col;
-        $scope.sortingOrder = 'asc';
-      } else {
-        if($scope.sortingOrder == 'asc') {
-          $scope.sortingOrder = 'desc';
-        } else {
-          $scope.sortingOrder = 'asc';
-        }
-      }
-      sorter();
-    }
-   
-    function sorter(){
-      var sortingField = angular.copy($scope.currentSortField);
-      var sortingFieldUser = angular.copy($scope.currentSortField);
-      var sortingOrder = angular.copy($scope.sortingOrder);
-      $scope.ResourceBooking.sort(function(a, b){
-        var sortingVarA = '';
-        var sortingVarB = '';
-        if(sortingField == 'Project__c' || sortingField == 'User__c'){
-          
-          if(sortingField == 'User__c'){
-            sortingField = 'User';
-            sortingFieldUser = 'User__c';
-          }
-
-          sortingVarA = $rootScope[sortingField][a[sortingFieldUser]];
-          sortingVarB = $rootScope[sortingField][b[sortingFieldUser]];
-          if(sortingOrder == 'asc') {
-          return sortingVarA < sortingVarB;
-          } else {
-            return sortingVarA > sortingVarB;
-          }
-        } else {
-          var dateA = new Date(a[sortingField]);
-          var dateB = new Date(b[sortingField]);
-          if(sortingOrder == 'asc') {
-            return dateA > dateB;
-          } else {
-            return dateA < dateB ;
-          }
-        }        
-      });
-    }
-
     $scope.$watch("date", function (newValue,oldValue) {
       if(newValue != oldValue){
         $scope.disableGetDataButton = false;
       }
-    });
-    $scope.addRow = function(){
-       $scope.ResourceBooking.push({});
-       $scope.totalItems = $scope.totalItems +1;
-      /*$scope.ResourceBooking.push({'Date__c':'','Project__c':'','SaturdayHours__c':'',
-                                    'SundayHours__c':'','MondayHours__c':'','TuesdayHours__c':'',
-                                    'WednesdayHours__c':'', 'ThursdayHours__c':'','FridayHours__c':''});*/
-    }
+    });    
+
     $scope.openDatePicker = function() {
       $scope.popup.opened = true;
     };
-
     $scope.setDate = function(year, month, day) {
       $scope.date = new Date(year, month, day);
     };
 
+    $scope.addRow = function(){
+      $scope.ResourceBooking.push({});
+      $scope.totalItems = $scope.totalItems +1;
+    } 
 
     $scope.saveIt = function(rowEntity) {
       var updateObj = angular.copy(rowEntity);
@@ -236,7 +179,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
           }, function(error){
             console.error('error', error);
           }); 
-    }else{
+      }else{
       console.log('rowEntity w/o Id',updateObj);
 
       vfr.create('Resource_Booking__c', angular.toJson(updateObj))
@@ -246,7 +189,71 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
           }, function(error){
             console.error('error', error);
         });       
-    } 
+      } 
+    };
+})
+.directive("tableDirective",function(){
+  return{
+    scope: {
+      displayObj: '=',
+      totalItem: '='
+    },
+    templateUrl:"views/tableDirective.html",
+    controller: function($scope, $rootScope, vfr) {
+
+      $scope.sortingOrder = 'asc';
+      $scope.currentSortField = 'User__c';
+      $scope.editedRow ='';      
+      $scope.currentPage = 2;
+      $scope.itemsPerPage = 4;      
+      
+      $scope.sortColumn = function(col) {
+        if($scope.currentSortField != col) {
+          $scope.currentSortField = col;
+          $scope.sortingOrder = 'asc';
+        } else {
+          if($scope.sortingOrder == 'asc') {
+            $scope.sortingOrder = 'desc';
+          } else {
+            $scope.sortingOrder = 'asc';
+          }
+        }
+        sorter();
+      }
+   
+      function sorter(){
+        var sortingField = angular.copy($scope.currentSortField);
+        var sortingFieldUser = angular.copy($scope.currentSortField);
+        var sortingOrder = angular.copy($scope.sortingOrder);
+        $scope.displayObj.sort(function(a, b){
+          var sortingVarA = '';
+          var sortingVarB = '';
+          if(sortingField == 'Project__c' || sortingField == 'User__c'){
+            
+            if(sortingField == 'User__c'){
+              sortingField = 'User';
+              sortingFieldUser = 'User__c';
+            }
+
+            sortingVarA = $rootScope[sortingField][a[sortingFieldUser]];
+            sortingVarB = $rootScope[sortingField][b[sortingFieldUser]];
+            if(sortingOrder == 'asc') {
+              return sortingVarA < sortingVarB;
+            } else {
+                return sortingVarA > sortingVarB;
+            }
+          } else {
+            var dateA = new Date(a[sortingField]);
+            var dateB = new Date(b[sortingField]);
+            if(sortingOrder == 'asc') {
+              return dateA > dateB;
+            } else {
+              return dateA < dateB ;
+            }
+          }        
+        });
+      }  
+    }
   };
 })
 .directive("typeaheadDirective",function(){
@@ -285,7 +292,7 @@ angular.module('demoPage-main',['ngRoute','ngForce','720kb.datepicker','ui.boots
 
         $scope.onSelect = function($item, $model, $label, $event){
           console.log('$item',$item.Id);
-           console.log('$item---2',$item);
+          // console.log('$item---2',$item);
           $scope.recName = $label;
           $scope.currData = $model;
         }
