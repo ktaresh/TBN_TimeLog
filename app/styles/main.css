@@ -20,8 +20,15 @@ width:90%;
 	padding: 3px 10px;
 }
 .divTableHeading {
+	font-family: "Times New Roman", Times, serif;
 	background-color: #138EFA;
 	color: #EEE;
+}
+
+.divTableHeading-days {
+	margin: 5%;
+	margin-left: 5%;
+	
 }
 
 .divTableCell{
@@ -65,14 +72,14 @@ width:90%;
 }
 
 .input-hrs{
-	width: 60% !important;
+	width: 100% !important;
 }
 
 .input-typeAhead{
 	width: 100% !important;
 }
 .input-typeAheadNameCell{
-	width: 23% !important;
+	width: 20% !important;
 }
 
 input{
@@ -81,12 +88,11 @@ input{
     padding-top: 5px !important;
     padding-right: 5px !important;
     padding-bottom: 5px !important;
-    padding-left: 5x !important;
+    padding-left: 5px !important;
 }
 
-
 .input-typeAheadDateCell{
-	width: 28% !important;
+	width: 20% !important;
 }
 .input-group{
 	width: 90% !important;
