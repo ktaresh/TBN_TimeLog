@@ -55,29 +55,29 @@
               <div class="divTableCell divTableHeading" ng-click="sortColumn('Date__c')">
                 Date <i class="fa fa-sort-{{sortingOrder}}" ng-show="currentSortField == 'Date__c'"></i>
               </div>
-              <div class="divTableCell divTableHeading">
-                Sunday
+              <div class="divTableCell divTableHeading divTableHeading-days">
+                Sun
               </div>
               <div class="divTableCell divTableHeading">
-                Monday
+                Mon
               </div>
               <div class="divTableCell divTableHeading">
-                Tuesday
+                Tue
               </div>
               <div class="divTableCell divTableHeading">
-                Wednesday
+                Wed
               </div>
               <div class="divTableCell divTableHeading">
-                Thursday
+                Thu
               </div>
               <div class="divTableCell divTableHeading">
-                Friday
+                Fri
               </div>
               <div class="divTableCell divTableHeading">
-                Saturday
+                Sat
               </div>
           </div>
-          <div ng-repeat="ResourceBooking in ResourceBooking"
+          <div ng-repeat="ResourceBooking in ResourceBooking.slice(((currentPage-1)*itemsPerPage),((currentPage)*itemsPerPage))"
                 class="divTableRow">
               <div class="divTableCell input-typeAheadNameCell">
                 <typeahead-Directive type="User" 
@@ -97,19 +97,19 @@
                                     class="form-control input-hrs"/>
               </div >
               <div class="divTableCell input-hrsData">
-                <day-Directive display-Obj="ResourceBooking.MondayHours__c"/>
+                <day-Directive display-Obj="ResourceBooking" day="ResourceBooking.MondayHours__c"/>
               </div>
               <div class="divTableCell input-hrsData">
-                <day-Directive display-Obj="ResourceBooking.TuesdayHours__c"/>
+                <day-Directive display-Obj="ResourceBooking" day="ResourceBooking.TuesdayHours__c"/>
               </div> 
               <div class="divTableCell input-hrsData">
-                <day-Directive display-Obj="ResourceBooking.WednesdayHours__c"/>
+                <day-Directive display-Obj="ResourceBooking" day="ResourceBooking.WednesdayHours__c"/>
               </div> 
               <div class="divTableCell input-hrsData">
-                <day-Directive display-Obj="ResourceBooking.ThursdayHours__c"/>
+                <day-Directive display-Obj="ResourceBooking" day="ResourceBooking.ThursdayHours__c"/>
               </div> 
               <div class="divTableCell input-hrsData">
-                <day-Directive display-Obj="ResourceBooking.FridayHours__c"/>
+                <day-Directive display-Obj="ResourceBooking" day="ResourceBooking.FridayHours__c"/>
               </div>   
 
               <div class="divTableCell input-hrsData">
@@ -123,20 +123,20 @@
       </div>
       
      <div style="text-align:center; margin:0 auto;">
-      <ul uib-pager ng-model="currentPage" total-items="totalItem" 
+      <ul uib-pager ng-model="currentPage" total-items="totalItems" 
                       items-per-page="itemsPerPage" 
                       next-text="Next>>" 
                       previous-text="<<Previous"></ul>
     </div> 
     <p style="color:red;">{{noRecordsMsg}}</p>
     <div align="center">
-      <button type="button" class="btn btn-primary" ng-click="saveIt()" ng-disabled="true" style="padding-left:15px; padding-right:15px;">
+      <button type="button" class="btn btn-primary" ng-click="saveIt()" style="padding-left:15px; padding-right:15px;">
           Save
         </button>
-        {{$dirty}}
-        <button type="button" class="btn btn-primary" ng-click="buildQuery()" ng-disabled="true" style="margin-left:5%;"">
+        <button type="button" class="btn btn-primary" ng-click="buildQuery()"  style="margin-left:5%;"">
           Cancel
         </button>
       </div>  
   </div>  
+
 </div>
