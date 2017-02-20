@@ -210,55 +210,43 @@ angular.module('demoPage-main',['ngRoute','ngForce','ui.bootstrap'])
       $scope.totalItems = $scope.totalItems +1;
     } 
 
-    $scope.saveIt = function(rowEntity) {
-      var updateObj = angular.copy(rowEntity);
-      var objId = updateObj.Id;      
-      delete updateObj.attributes;
+    $scope.saveIt = function() {
+      console.log('ResourceBooking saveIt---',$scope.ResourceBooking);
+      var updateObj = angular.copy($scope.ResourceBooking);
+      for(var k = 0; k < updateObj.length; k++){
+        delete updateObj[k].attributes;
+      first = new Date(updateObj[k].Date__c).getDate() - new Date(updateObj[k].Date__c).getDay();    
+      updateObj[k].Date__c = $scope.formatDate(new Date(new Date(updateObj[k].Date__c).setDate(first)));
+      }           
+      console.log('updateOBJ -->>>',updateObj);
+       console.log('updateOBJ JSON -->>>', angular.toJson(updateObj));
 
-      if(angular.isDefined(rowEntity.Id)){
-        delete updateObj.User_Name;
-        delete updateObj.Project_Name;
-        delete updateObj.Id;
-        delete updateObj.Name;
-        delete updateObj.Project__c;
-
-        first = new Date(updateObj.Date__c).getDate() - new Date(updateObj.Date__c).getDay();    
-        updateObj.Date__c = $scope.formatDate(new Date(new Date(updateObj.Date__c).setDate(first)));
-
-        vfr.update('Resource_Booking__c', objId, angular.toJson(updateObj))
-          .then(function(result){
-            console.log('Record Updated Successfully');
-            $q.resolve();          
-          }, function(error){
-            console.error('error', error);
-          }); 
-      }else{
-      console.log('rowEntity w/o Id',updateObj);
-
-      vfr.create('Resource_Booking__c', angular.toJson(updateObj))
+      vfr.bulkUpdate('Resource_Booking__c',angular.toJson(updateObj))
         .then(function(result){
-            console.log('Record Created Successfully');
-            $q.resolve();          
-          }, function(error){
-            console.error('error', error);
-        });       
-      } 
+          console.log('Record Inserted/Updated Successfully');
+          $q.resolve();          
+        }, function(error){
+          console.error('error', error);
+        });
     };
+
+  //vfRemote.send = vfRemote.send('ngResourceBookingController.upsert2', standardOptions, true);
 })
 .directive("dayDirective",function(){
   return{
     scope: {
-      displayObj: '='
+      displayObj: '=',
+      day: '='
     },
     templateUrl:"views/dayDirective.html",
     controller: function($scope, $rootScope, vfr) {     
 
-      $scope.$watch("displayObj", function (newValue,oldValue) {
+      $scope.$watch("day", function (newValue,oldValue) {
         if(newValue != oldValue){
           console.log('new displayObj value->>',$scope.displayObj);
+          console.log('new dirtyCheck value->>',$scope.day);
         }
-      }); 
-
+      });
     }
   };
 })
@@ -297,10 +285,12 @@ angular.module('demoPage-main',['ngRoute','ngForce','ui.bootstrap'])
         }
 
         $scope.onSelect = function($item, $model, $label, $event){
-          console.log('$item',$item.Id);
-          // console.log('$item---2',$item);
+          console.log('$item Id onSelect->>',$item.Id);
+          console.log('$item onSelect->>',$item);
+          console.log('$label onSelect->>',$label);
+          console.log('$model onSelect->>',$model);
           $scope.recName = $label;
-          $scope.currData = $model;
+          $scope.currData = $item.Id;
         }
 
         $scope.onNgChange = function() {
